@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
     'spec/spec_helper.rb',
   ]
 
+  s.add_dependency 'colorize'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rdoc'
 

@@ -9,6 +9,7 @@ end
 
 require 'puppet-lint/configuration'
 require 'puppet-lint/plugin'
+require 'colorize'
 
 unless String.respond_to?('prepend')
   class String
@@ -80,6 +81,7 @@ class PuppetLint
 
   def initialize
     @data = nil
+    @summary_allowed = true
     @statistics = {:error => 0, :warning => 0}
     @fileinfo = {:path => ''}
   end
@@ -149,6 +151,27 @@ class PuppetLint
     end.flatten
   end
 
+  def formatted_errors
+    puts "Errors:   #{@statistics[:error]}".red if errors?
+  end
+
+  def formatted_warnings
+    puts "Warnings: #{@statistics[:warning]}".yellow if warnings?
+  end
+
+  def summarize
+    formatted_errors
+    formatted_warnings
+  end
+
+  def summary_allowed?
+    @summary_allowed
+  end
+
+  def disable_summary
+    @summary_allowed = false
+  end
+
   def run
     if @data.nil?
       raise PuppetLint::NoCodeError
@@ -157,6 +180,11 @@ class PuppetLint
     PuppetLint::CheckPlugin.repository.each do |plugin|
       report plugin.new.run(@fileinfo, @data)
     end
+
+    if configuration.summary && summary_allowed?
+      summarize
+    end
+
   end
 end
 
@@ -165,5 +193,6 @@ PuppetLint.configuration.fail_on_warnings = false
 PuppetLint.configuration.error_level = :all
 PuppetLint.configuration.with_filename = false
 PuppetLint.configuration.log_format = ''
+PuppetLint.configuration.summary = false
 
 require 'puppet-lint/plugins'

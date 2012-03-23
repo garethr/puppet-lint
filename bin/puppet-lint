@@ -29,6 +29,10 @@ opts = OptionParser.new do |opts|
     PuppetLint.configuration.with_filename = true
   end
 
+  opts.on("--summary", "Display a summary at the end") do
+    PuppetLint.configuration.summary = true
+  end
+
   opts.on("--error-level LEVEL", [:all, :warning, :error], "The level of error to return.", "(warning, error, all)") do |el|
     PuppetLint.configuration.error_level = el
   end

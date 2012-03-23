@@ -13,8 +13,14 @@ class PuppetLint
           Dir.glob('**/*.pp').each do |puppet_file|
             puts "Evaluating #{puppet_file}"
             linter.file = puppet_file
+            linter.disable_summary
             linter.run
           end
+
+          if PuppetLint.configuration.summary
+            linter.summarize
+          end
+
           fail if linter.errors?
         end
       end
